@@ -1,44 +1,17 @@
 import json
 
-from langchain_ollama import OllamaLLM
+from analyze_tweets import analyze
 
-# Initialize the LLM
-llm = OllamaLLM(model="llama3.2")  # or any model you're using
+tweets = [
+    "Economic transformation, trade affair and boasting tourism sector Yes it's a strong pillar in easing mobility",
+    "The sector appreciates and applauds the efforts of the Chief Executive Officer. These efforts will be discussed further at this year's Pearl of Africa Tourism Expo Conferences. You are invited to attend.",
+    "London flights are long over due Get serious folks",
+    "Kati mbu tusiime mbu mukola nyoo, ku buubii kwemutude",
+    "We love to fly @UG_Airlines but last minute cancellation of flights without information is disturbing, mostly EBB to DXB, you returning from vacation, at airport is when you know flight is cancelled, you have a date to resume work even the next flight date won’t be communicated",
+]
 
-# Example tweet
-tweet = "I absolutely HATE when people don't use their turn signals while driving!! It's dangerous and inconsiderate!! #RoadRage"
 
-# Prompt for sentiment analysis with specific JSON structure
-prompt = f"""
-Analyze the following tweet and return ONLY a JSON object with sentiment analysis.
+analysis_results = analyze(tweets)
 
-Tweet: "{tweet}"
-
-The JSON must have exactly these three fields:
-- sentiment: a string describing the overall sentiment (e.g., positive, negative, neutral)
-- aggressiveness: an integer from 1 to 10 indicating how aggressive the text is
-- language: a string identifying the language the text is written in
-
-Return ONLY the JSON object without any explanation or additional text.
-"""
-
-# Get response
-response = llm.invoke(prompt)
-
-# Try to parse the JSON
-try:
-    # Extract JSON if it's wrapped in code blocks
-    if "```json" in response:
-        json_str = response.split("```json")[1].split("```")[0].strip()
-    elif "```" in response:
-        json_str = response.split("```")[1].split("```")[0].strip() 
-    else:
-        json_str = response.strip()
-   
-    # Parse the JSON
-    analysis_json = json.loads(json_str)
-    print(json.dumps(analysis_json, indent=2))
- 
-except json.JSONDecodeError as e:
-    print(f"Error parsing JSON: {e}")
-    print(f"Raw response:\n{response}")
+# Print results
+print(json.dumps(analysis_results, indent=2))
